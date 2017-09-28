@@ -90,6 +90,10 @@
 		  background: #bbdfdf;
 		}
 
+		#instructions{
+			font-weight:bold;
+		}
+
 	</style>
 </head>
 <body>
@@ -98,6 +102,8 @@
 		<button id="NewList">Dictate New List</button>
 		<button id="AppendToList">Dictate New List Items</button>
 	</div>
+
+	<div id="instructions">State "New Item" between list items</div>
 
 	<div class="toDoList" id="sortable"></div>
 	
@@ -115,27 +121,38 @@
 
 		var diagnostic = document.querySelector('.output');
 		var bg = document.querySelector('html');
+		var actionBtn = "";
 
-		document.querySelector("button").onclick = function() {
-		  recognition.start();
-		  document.querySelector("button").disabled = true;
-		  console.log('Ready to receive a color command.');
+		document.querySelector("#AppendToList").disabled = true;
+
+		document.querySelector("#NewList").onclick = function() {
+		  	actionBtn = "NewList";
+		 	recognition.start();
+		  	document.querySelector("#NewList").disabled = true;
+		  	document.querySelector("#AppendToList").disabled = true;
+		}
+
+		document.querySelector("#AppendToList").onclick = function() {
+		  	actionBtn = "AppendToList";
+		 	recognition.start();
+		  	document.querySelector("#NewList").disabled = true;
+		  	document.querySelector("#AppendToList").disabled = true;
 		}
 
 		recognition.onresult = function(event) {
 			document.querySelector(".toDoList").style.display="block";
 			recognition.stop();
-			console.log(event);
-			document.querySelector("button").disabled = false;
-		  var transcript = event.results[0][0].transcript;
-		  var transcript_list = transcript.replace("New Item","new item").replace("new Item","new item").replace("New item","new item").replace("new item","new item").replace("New Item","new item").split(" new item ");
-		  transcript_list[0] = transcript_list[0].replace("new item ","").replace("item ","").replace("Item ","").replace("Tim ","");
-		  makeList(transcript_list);
-		  
+		  	document.querySelector("#NewList").disabled = false;
+		  	document.querySelector("#AppendToList").disabled = false;
+		  	var transcript = event.results[0][0].transcript;
+		  	var transcript_list = transcript.replace("New Item","new item").replace("new Item","new item").replace("New item","new item").replace("new item","new item").replace("New Item","new item").split(" new item ");
+		  	transcript_list[0] = transcript_list[0].replace("new item ","").replace("item ","").replace("Item ","").replace("Tim ","");
 		}
 
 		function makeList(transcript_list){
-			document.querySelector(".toDoList").innerHTML="";
+			if(actionBtn=="NewList"){
+				document.querySelector(".toDoList").innerHTML="";
+			}
 			for (var i=0; i< transcript_list.length; i++){
 				var parDiv = document.createElement("div");
 				parDiv.className = "item";
