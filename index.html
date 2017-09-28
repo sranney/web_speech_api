@@ -14,7 +14,22 @@
 
 	<style type="text/css">
 		
-		#startListening{
+		#listItems{
+			display:inline;
+		}
+
+		#NewList{
+			padding:15px;
+			margin:20px;
+			background-color: black;
+			font-weight:bold;
+			font-size:30px;
+			color:white;
+			border-radius:50px;
+			border:10px solid red;
+		}
+
+		#AppendToList{
 			padding:15px;
 			margin:20px;
 			background-color: black;
@@ -26,6 +41,7 @@
 		}
 
 	    #sortable { 
+			display:none;
 	    	margin: 0;
 	    	padding: 0;
 	    	width: max-content;
@@ -78,7 +94,10 @@
 </head>
 <body>
 	
-	<button id="startListening">Talk</button>
+	<div class="listBtns">
+		<button id="NewList">Dictate New List</button>
+		<button id="AppendToList">Dictate New List Items</button>
+	</div>
 
 	<div class="toDoList" id="sortable"></div>
 	
@@ -104,6 +123,7 @@
 		}
 
 		recognition.onresult = function(event) {
+			document.querySelector(".toDoList").style.display="block";
 			recognition.stop();
 			console.log(event);
 			document.querySelector("button").disabled = false;
@@ -162,10 +182,16 @@
 		    }
 
 		    if(e.target && e.target.className == 'deleteItem'){
+		    	if(document.getElementsByClassName("toDOList")[0].childElementCount==0){
+		    		document.getElementsByClassName("toDOList").style.display="none";
+		    	}
 		    	e.target.parentElement.remove();
 		    }
 
 		    if(e.target && e.target.className == 'completeItem'){
+		    	if(document.getElementsByClassName("toDOList")[0].childElementCount==0){
+		    		document.getElementsByClassName("toDOList").style.display="none";
+		    	}
 		    	var p = document.createElement("p");
 		    	p.innerHTML = e.target.parentElement.getElementsByClassName("listItem")[0].innerHTML;
 		 		document.querySelector(".completedTasks").appendChild(p);   	
