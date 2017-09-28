@@ -51,11 +51,13 @@
 			console.log(event);
 			document.querySelector("button").disabled = false;
 		  var transcript = event.results[0][0].transcript;
-		  var transcript_list = transcript.split(" new item ");
+		  var transcript_list = transcript.replace("New Item","new item").replace("new Item","new item").replace("New item","new item").replace("New Item","new item").split(" new item ");
+		  var transcript_list = transcript_list.replace("item ","");
 		  console.log(transcript);
 		  console.log(transcript_list);
 		  
 		}
+
 	</script>
 </body>
 </html>
