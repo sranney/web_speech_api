@@ -107,16 +107,16 @@
 
 		function makeList(transcript_list){
 			document.querySelector(".toDoList").innerHTML="";
-			for (var i=0; i< arraylist.length; i++){
+			for (var i=0; i< transcript_list.length; i++){
 				var parDiv = document.createElement("div");
 				parDiv.className = "item";
 				var p = document.createElement("p");
-				p.innerHTML = arraylist[i];
+				p.innerHTML = transcript_list[i];
 				p.className="listItem";
 				parDiv.appendChild(p);
 				var pInput = document.createElement("input");
 				pInput.setAttribute("type","text");
-				pInput.setAttribute("value",arraylist[i]);
+				pInput.setAttribute("value",transcript_list[i]);
 				pInput.className="editListItem";
 				parDiv.appendChild(pInput);
 				var completeBtn = document.createElement("button");
