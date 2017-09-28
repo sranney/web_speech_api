@@ -41,11 +41,13 @@
 		var bg = document.querySelector('html');
 
 		document.querySelector("button").onclick = function() {
+		  recognition.stop();
 		  recognition.start();
 		  console.log('Ready to receive a color command.');
 		}
 
 		recognition.onresult = function(event) {
+			console.log(event);
 		  var color = event.results[0][0].transcript;
 		  diagnostic.textContent = 'Result received: ' + color;
 		  bg.style.backgroundColor = color;
