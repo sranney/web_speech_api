@@ -57,7 +57,9 @@
 		function makeList(transcript_list){
 			document.querySelector(".output").innerHTML="";
 			for (var i=0; i<transcript_list.length; i++){
-				document.querySelector(".output").appendChild("<p>"+transcript_list[i]+"</p>");
+				var p = document.createElement("p");
+				p.innerHTML = arraylist[i];
+				document.querySelector(".output").appendChild(p);
 			}
 		}
 
