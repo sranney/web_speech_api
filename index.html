@@ -147,6 +147,7 @@
 		  	var transcript = event.results[0][0].transcript;
 		  	var transcript_list = transcript.replace("New Item","new item").replace("new Item","new item").replace("New item","new item").replace("new item","new item").replace("New Item","new item").split(" new item ");
 		  	transcript_list[0] = transcript_list[0].replace("new item ","").replace("item ","").replace("Item ","").replace("Tim ","");
+		  	makeList(transcript_list);
 		}
 
 		function makeList(transcript_list){
