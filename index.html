@@ -5,7 +5,7 @@
 
 	<style type="text/css">
 		
-		button{
+		#startListening{
 			padding:15px;
 			margin:20px;
 			background-color: black;
@@ -16,11 +16,41 @@
 			border:10px solid red;
 		}
 
+		.item{
+			display:flex;
+			width:max-content;
+			background-color: grey;
+			margin:3px 0px;
+		}
+
+		.item:hover{
+			background-color:white;
+		}
+		
+		.item:hover button.changeItem{
+			background-color:orange;
+		}
+		.item:hover button.deleteItem{
+			background-color:red;
+		}
+		.editListItem{
+			display:none;
+			width:max-content;
+			padding:16px 0px;
+			font-family:times;
+			font-size:16px;
+		}
+
+		.editListItem::selection {
+		  background: #bbdfdf;
+		}
+
+
 	</style>
 </head>
 <body>
 	
-	<button>Talk</button>
+	<button id="startListening">Talk</button>
 
 	<div class="output"></div>
 	
@@ -56,13 +86,51 @@
 
 		function makeList(transcript_list){
 			document.querySelector(".output").innerHTML="";
-			for (var i=0; i<transcript_list.length; i++){
+			for (var i=0; i< transcript_list.length; i++){
+				var parDiv = document.createElement("div");
+				parDiv.className = "item";
 				var p = document.createElement("p");
 				p.innerHTML = transcript_list[i];
-				document.querySelector(".output").appendChild(p);
+				p.className="listItem";
+				parDiv.appendChild(p);
+				var pInput = document.createElement("input");
+				pInput.setAttribute("type","text");
+				pInput.setAttribute("value",transcript_list[i]);
+				pInput.className="editListItem";
+				parDiv.appendChild(pInput);
+				var editBtn = document.createElement("button");
+				editBtn.innerHTML = "Change";
+				editBtn.className = "changeItem";
+				parDiv.appendChild(editBtn);
+				var deleteBtn = document.createElement("button");
+				deleteBtn.innerHTML = "Delete";
+				deleteBtn.className = "deleteItem";
+				parDiv.appendChild(deleteBtn);
+				document.querySelector(".output").appendChild(parDiv);
 			}
 		}
 
+		document.addEventListener('click',function(e){
+		    if(e.target && e.target.className == 'changeItem'){
+		    	if(e.target.innerHTML == "Change"){
+					e.target.innerHTML = "Set Item";
+					e.target.parentElement.getElementsByClassName("editListItem")[0].style.display="block";
+					e.target.parentElement.getElementsByClassName("editListItem")[0].focus();
+					e.target.parentElement.getElementsByClassName("editListItem")[0].select();
+					e.target.parentElement.getElementsByClassName("listItem")[0].style.display="none";
+				} else {
+					e.target.innerHTML = "Change";
+					e.target.parentElement.getElementsByClassName("editListItem")[0].style.display="none";
+					e.target.parentElement.getElementsByClassName("listItem")[0].style.display="block";
+					var editedValue = e.target.parentElement.getElementsByClassName("editListItem")[0].value;
+					e.target.parentElement.getElementsByClassName("listItem")[0].innerHTML = editedValue;
+				}
+		    }
+
+		    if(e.target && e.target.className == 'deleteItem'){
+		    	e.target.parentElement.remove();
+		    }
+		 })
 
 	</script>
 </body>
