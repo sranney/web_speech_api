@@ -16,23 +16,43 @@
 			border:10px solid red;
 		}
 
-		.item{
-			display:flex;
+	    #sortable { 
+	    	margin: 0;
+	    	padding: 0;
+	    	width: max-content;
+	    	min-height:200px;
+	    	background-color:blue;
+	    	border:5px solid black;
+	    }
+
+	    #sortable div {			
+	    	display:flex;
 			width:max-content;
-			background-color: grey;
+			background-color: white;
 			margin:3px 0px;
+			border:2px solid black;
 		}
 
-		.item:hover{
-			background-color:white;
+		button.changeItem,
+		button.deleteItem,
+		button.completeItem{
+			float:right;
+			border-width:0px;
+			border-radius:15px;
 		}
 		
-		.item:hover button.changeItem{
-			background-color:orange;
+		button.changeItem{
+			background-color:yellow;
 		}
-		.item:hover button.deleteItem{
+
+		button.deleteItem{
 			background-color:red;
 		}
+
+		button.completeItem{
+			background-color:green;
+		}
+
 		.editListItem{
 			display:none;
 			width:max-content;
@@ -45,15 +65,16 @@
 		  background: #bbdfdf;
 		}
 
-
 	</style>
 </head>
 <body>
 	
 	<button id="startListening">Talk</button>
 
-	<div class="output"></div>
+	<div class="toDoList"></div>
 	
+	<div class="completedTasks"></div>
+
 	<script type="text/javascript">
 		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 		const recognition = new SpeechRecognition();
@@ -61,7 +82,7 @@
 		
 		//recognition.continuous = false;
 		recognition.lang = 'en-US';
-		recognition.interimResults = false;
+		recognition.interimResults = false	;
 		recognition.maxAlternatives = 1;
 
 		var diagnostic = document.querySelector('.output');
@@ -86,18 +107,22 @@
 
 		function makeList(transcript_list){
 			document.querySelector(".output").innerHTML="";
-			for (var i=0; i< transcript_list.length; i++){
+			for (var i=0; i< arraylist.length; i++){
 				var parDiv = document.createElement("div");
 				parDiv.className = "item";
 				var p = document.createElement("p");
-				p.innerHTML = transcript_list[i];
+				p.innerHTML = arraylist[i];
 				p.className="listItem";
 				parDiv.appendChild(p);
 				var pInput = document.createElement("input");
 				pInput.setAttribute("type","text");
-				pInput.setAttribute("value",transcript_list[i]);
+				pInput.setAttribute("value",arraylist[i]);
 				pInput.className="editListItem";
 				parDiv.appendChild(pInput);
+				var completeBtn = document.createElement("button");
+				completeBtn.innerHTML = "Complete";
+				completeBtn.className = "completeItem";
+				parDiv.appendChild(completeBtn);
 				var editBtn = document.createElement("button");
 				editBtn.innerHTML = "Change";
 				editBtn.className = "changeItem";
@@ -106,7 +131,7 @@
 				deleteBtn.innerHTML = "Delete";
 				deleteBtn.className = "deleteItem";
 				parDiv.appendChild(deleteBtn);
-				document.querySelector(".output").appendChild(parDiv);
+				document.querySelector(".toDoList").appendChild(parDiv);
 			}
 		}
 
@@ -130,7 +155,14 @@
 		    if(e.target && e.target.className == 'deleteItem'){
 		    	e.target.parentElement.remove();
 		    }
-		 })
+
+		    if(e.target && e.target.className == 'completeItem'){
+		    	var p = document.createElement("p");
+		    	p.innerHTML = e.target.parentElement.getElementsByClassName("listItem")[0].innerHTML;
+		 		document.querySelector(".completedTasks").appendChild(p);   	
+		    	e.target.parentElement.remove();
+		    }
+		})
 
 	</script>
 </body>
