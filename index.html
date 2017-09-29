@@ -97,7 +97,7 @@
 	        if (user) {
 				msg = "Welcome, " + user.displayName + ". Please let me know what you want to do by clicking the microphone.";
 	        } else {
-	        	msg = "Please log in with your Google account for a personalized experience. Once that is taken care of, press the microphone in the middle of the page. Then, you can tell me what you want to do. I look forward to helping you.";
+	        	msg = "Welcome, anonymous user. Please log in with your Google account for a personalized experience. I look forward to helping you.";
 	        }
 	       	utterThis = new SpeechSynthesisUtterance(msg);
 			utterThis.voice = voices[3];
@@ -113,7 +113,7 @@
 		function googleLogin(){
 	  	
 		  	Auth.signInWithPopup(provider).then(function(result) {
-	        	msg = "Welcome, " + result.user.displayName;
+	        	msg = "Welcome, " + result.user.displayName + ". Now that you are logged in, please press the microphone in the middle of the page. Then, you can tell me what you want to do.";
 	        	utterThis = new SpeechSynthesisUtterance(msg);
 				utterThis.voice = voices[3];
 		        utterThis.pitch = 1;
