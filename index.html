@@ -52,6 +52,36 @@
 			color:#DD1812;
 		}
 
+		#circle{
+			display:none;
+			border-radius:50px;
+			height:50px;
+			width:50px;
+			background-color:#C20000;
+		}
+
+		.recording{
+			animation-duration:1s;
+			animation-name:recGlow;
+			animation-fill-mode: forwards;
+		}
+
+		@keyframes recGlow{
+			0%{
+				box-shadow:0px 0px 0px #C20000;
+			}
+			33%{
+				box-shadow:0px 0px 30px #C20000;
+			}
+			66%{
+				box-shadow:0px 0px 0px #C20000;
+			}
+			100%{
+				box-shadow:0px 0px 30px #C20000;
+			}
+
+		}
+
 	</style>
 
 
@@ -64,6 +94,7 @@
 	<div id="micDiv">
 		
 		<i id="mic" class="fa fa-microphone glow"></i>
+		<div id="circle"></div>
 
 	</div>
 	<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
@@ -88,20 +119,31 @@
 		var Auth = firebase.auth();
 		var provider = new firebase.auth.GoogleAuthProvider();
 
+		//for speaking
 		var utterThis,msg;
+
+		//for listening
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		const recognition = new SpeechRecognition();
+		const SpeechGrammarList = window.SpeechGrammarList||window.webkitSpeechGrammarList;
+		recognition.lang = 'en-US';
+		recognition.interimResults = false;
+		recognition.maxAlternatives = 1;
+
 	    
 	    Auth.onAuthStateChanged(function(user) {
 
 	        if (user) {
 				msg = "Welcome, " + user.displayName + ". Please let me know what you want to do by clicking the microphone.";
 	        } else {
-	        	msg = "Welcome, anonymous user. Please log in with your Google account for a personalized experience.";
+	        	msg = "Welcome, anonymous user. First thing first. Please log in with your Google account. Then we'll get down to business.";
 	        }
+
 	       	utterThis = new SpeechSynthesisUtterance(msg);
 			utterThis.voice = voices[3];
 	        utterThis.pitch = 1;
 	        utterThis.rate = 1;
-	        synth.speak(utterThis);
+	        setTimeout(function(){synth.speak(utterThis);},3000);
 	    });
 
 	    $("#googleAuth").on("click",function(){
@@ -128,6 +170,29 @@
 			  // The firebase.auth.AuthCredential type that was used.
 			  var credential = error.credential;
 			});
+		}
+
+		$("#mic").on("click",function(){
+			recognition.start();
+			$("#circle").css("display","block");
+			$("#circle").addClass("recording");
+		})
+
+		recognition.onresult = function(event) {
+			recognition.stop();
+		  	var transcript = event.results[0][0].transcript;
+        	msg = "Alright, let's go " + transcript + ".";
+        	utterThis = new SpeechSynthesisUtterance(msg);
+			utterThis.voice = voices[3];
+	        utterThis.pitch = 1;
+	        utterThis.rate = 1;
+	        synth.speak(utterThis);
+	        setTimeout(function(){
+	        	if (transcript.indexOf("list")!=-1){
+					var win = window.open("helper_page.html","_self");
+					win.focus();	        		
+	        	}
+	        },5000);
 		}
 
 
