@@ -53,10 +53,13 @@
 		}
 
 		#circle{
+			position:absolute;
+			top:30%;
+			left:45%;
 			display:none;
 			border-radius:50px;
-			height:50px;
-			width:50px;
+			height:25px;
+			width:25px;
 			background-color:#C20000;
 		}
 
@@ -71,13 +74,13 @@
 				box-shadow:0px 0px 0px #C20000;
 			}
 			33%{
-				box-shadow:0px 0px 30px #C20000;
+				box-shadow:0px 0px 50px #C20000;
 			}
 			66%{
 				box-shadow:0px 0px 0px #C20000;
 			}
 			100%{
-				box-shadow:0px 0px 30px #C20000;
+				box-shadow:0px 0px 50px #C20000;
 			}
 
 		}
@@ -134,7 +137,9 @@
 	    Auth.onAuthStateChanged(function(user) {
 
 	        if (user) {
-				msg = "Welcome, " + user.displayName + ". Please let me know what you want to do by clicking the microphone.";
+				msg = "Welcome, " + user.displayName + ". Let's get started. Please let me know what you want to do by clicking the microphone. Then, you can tell me what you want to do.";
+				$("#micDiv").css("display","block");	  		
+		        $("#googleAuth").css("display","none");
 	        } else {
 	        	msg = "Welcome, anonymous user. First thing first. Please log in with your Google account. Then we'll get down to business.";
 	        }
@@ -153,14 +158,8 @@
 		function googleLogin(){
 	  	
 		  	Auth.signInWithPopup(provider).then(function(result) {
-	        	msg = "Welcome, " + result.user.displayName + ". Now that you are logged in, please press the microphone in the middle of the page. Then, you can tell me what you want to do.";
-	        	utterThis = new SpeechSynthesisUtterance(msg);
-				utterThis.voice = voices[3];
-		        utterThis.pitch = 1;
-		        utterThis.rate = 1;
-		        synth.speak(utterThis);
 		        $("#micDiv").css("display","block");	  		
-		        $("#authDiv").css("display","none");
+		        $("#googleAuth").css("display","none");
 			}).catch(function(error) {
 			  // Handle Errors here.
 			  var errorCode = error.code;
