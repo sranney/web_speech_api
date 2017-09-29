@@ -2,221 +2,134 @@
 <html lang="en">
 <head>
 	<title></title>
-	  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	  <script>
-	  $( function() {
-	    $( "#sortable" ).sortable();
-	    $( "#sortable" ).disableSelection();
-	  } );
-	  </script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<!--bootstrap css link-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!--bootstrap js link-->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!--font awesome link-->
+	<script src="https://use.fontawesome.com/2a8a6780db.js"></script>
 
 	<style type="text/css">
 		
-		#listItems{
-			display:inline;
+		body{
+			background-color: #092B40;
 		}
 
-		#NewList{
-			padding:15px;
-			margin:20px;
-			background-color: black;
-			font-weight:bold;
-			font-size:30px;
-			color:white;
-			border-radius:50px;
-			border:10px solid red;
+		#mic{
+			position:absolute;
+			top:30%;
+			left:45%;
+			font-size:200px;
+			color:#295773;
+			text-shadow: 0px 0px 15px black;
 		}
 
-		#AppendToList{
-			padding:15px;
-			margin:20px;
-			background-color: black;
-			font-weight:bold;
-			font-size:30px;
-			color:white;
-			border-radius:50px;
-			border:10px solid red;
-		}
-
-	    #sortable { 
+		#micDiv{
 			display:none;
-	    	margin: 0;
-	    	padding: 0;
-	    	width: max-content;
-	    	min-height:200px;
-	    	background-color:blue;
-	    	border:5px solid black;
-	    }
-
-	    #sortable div {			
-	    	display:flex;
-			width:max-content;
-			background-color: white;
-			margin:3px 0px;
-			border:2px solid black;
 		}
 
-		button.changeItem,
-		button.deleteItem,
-		button.completeItem{
-			float:right;
-			border-width:0px;
-			border-radius:15px;
-		}
-		
-		button.changeItem{
-			background-color:yellow;
+		#mic:hover { 
+			color:#A9D0D9;
+			text-shadow: 0px 0px 30px #A9D0D9; 
 		}
 
-		button.deleteItem{
-			background-color:red;
+		#googleAuth{
+			position:absolute;
+			top:40%;
+			left:30%;
+			border-radius:7px;
+			color:white;
+			font-size:60px;
+			margin:1px auto;
+			padding:20px;
+			background-color:#DD1812;
+			border:0px solid white;
 		}
 
-		button.completeItem{
-			background-color:green;
-		}
-
-		.editListItem{
-			display:none;
-			width:max-content;
-			padding:16px 0px;
-			font-family:times;
-			font-size:16px;
-		}
-
-		.editListItem::selection {
-		  background: #bbdfdf;
-		}
-
-		#instructions{
-			font-weight:bold;
+		#googleAuth:hover{
+			background-color:white;
+			color:#DD1812;
 		}
 
 	</style>
+
+
 </head>
 <body>
 	
-	<div class="listBtns">
-		<button id="NewList">Dictate New List</button>
-		<button id="AppendToList">Dictate New List Items</button>
+	<div id="authDiv" class="text-center">
+		<button id="googleAuth"><i class="fa fa-google"></i><i class="fa fa-fw"></i>Sign In with Google</button>
 	</div>
 
-	<div id="instructions">State "New Item" between list items</div>
 
-	<div class="toDoList" id="sortable"></div>
-	
-	<div class="completedTasks"></div>
+	<div id="micDiv">
+		
+		<i id="mic" class="fa fa-microphone glow"></i>
+
+	</div>
 
 	<script type="text/javascript">
-		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-		const recognition = new SpeechRecognition();
-		const SpeechGrammarList = window.SpeechGrammarList||window.webkitSpeechGrammarList;
 		
-		//recognition.continuous = false;
-		recognition.lang = 'en-US';
-		recognition.interimResults = false	;
-		recognition.maxAlternatives = 1;
+		var synth = window.speechSynthesis;
 
-		var diagnostic = document.querySelector('.output');
-		var bg = document.querySelector('html');
-		var actionBtn = "";
+		var voices = [];
+		voices = synth.getVoices();
 
-		document.querySelector("#AppendToList").disabled = true;
+		var config = {
+		    apiKey: "AIzaSyAMCxQKQ69OGfhnMoBgR3hK8qfbdcgjNWc",
+		    authDomain: "webspeech-e3087.firebaseapp.com",
+		    databaseURL: "https://webspeech-e3087.firebaseio.com",
+		    projectId: "webspeech-e3087",
+		    storageBucket: "webspeech-e3087.appspot.com",
+			messagingSenderId: "985334230069"
+		};
+		firebase.initializeApp(config);
+		
+		var dB = firebase.database();
+		var Auth = firebase.auth();
+		var utterThis,msg;
+	    
+	    Auth.onAuthStateChanged(function(user) {
 
-		document.querySelector("#NewList").onclick = function() {
-		  	actionBtn = "NewList";
-		 	recognition.start();
-		  	document.querySelector("#NewList").disabled = true;
-		  	document.querySelector("#AppendToList").disabled = true;
+	        if (user) {
+				msg = "Welcome, " + user.displayName + ". Please let me know what you want to do by clicking the microphone.";
+	        } else {
+	        	msg = "Please log in with your Google account for a personalized experience. Once that is taken care of, press the microphone in the middle of the page. Then, you can tell me what you want to do. I look forward to helping you.";
+	        }
+	       	utterThis = new SpeechSynthesisUtterance(msg);
+			utterThis.voice = voices[3];
+	        utterThis.pitch = 1;
+	        utterThis.rate = 1;
+	        synth.speak(utterThis);
+	    });
+
+	    $("#googleAuth").on("click",function(){
+	    	googleLogin();
+	    })
+
+		function googleLogin(){
+	  	
+		  	Auth.signInWithPopup(provider).then(function(result) {
+	        	msg = "Welcome, " + result.user.displayName;
+	        	utterThis = new SpeechSynthesisUtterance(msg);
+				utterThis.voice = voices[3];
+		        utterThis.pitch = 1;
+		        utterThis.rate = 1;
+		        synth.speak(utterThis);	  		
+			}).catch(function(error) {
+			  // Handle Errors here.
+			  var errorCode = error.code;
+			  var errorMessage = error.message;
+			  // The email of the user's account used.
+			  var email = error.email;
+			  // The firebase.auth.AuthCredential type that was used.
+			  var credential = error.credential;
+			});
 		}
 
-		document.querySelector("#AppendToList").onclick = function() {
-		  	actionBtn = "AppendToList";
-		 	recognition.start();
-		  	document.querySelector("#NewList").disabled = true;
-		  	document.querySelector("#AppendToList").disabled = true;
-		}
-
-		recognition.onresult = function(event) {
-			document.querySelector(".toDoList").style.display="block";
-			recognition.stop();
-		  	document.querySelector("#NewList").disabled = false;
-		  	document.querySelector("#AppendToList").disabled = false;
-		  	var transcript = event.results[0][0].transcript;
-		  	var transcript_list = transcript.replace("New Item","new item").replace("new Item","new item").replace("New item","new item").replace("new item","new item").replace("New Item","new item").split(" new item ");
-		  	transcript_list[0] = transcript_list[0].replace("new item ","").replace("item ","").replace("Item ","").replace("Tim ","");
-		  	makeList(transcript_list);
-		}
-
-		function makeList(transcript_list){
-			if(actionBtn=="NewList"){
-				document.querySelector(".toDoList").innerHTML="";
-			}
-			for (var i=0; i< transcript_list.length; i++){
-				var parDiv = document.createElement("div");
-				parDiv.className = "item";
-				var p = document.createElement("p");
-				p.innerHTML = transcript_list[i];
-				p.className="listItem";
-				parDiv.appendChild(p);
-				var pInput = document.createElement("input");
-				pInput.setAttribute("type","text");
-				pInput.setAttribute("value",transcript_list[i]);
-				pInput.className="editListItem";
-				parDiv.appendChild(pInput);
-				var completeBtn = document.createElement("button");
-				completeBtn.innerHTML = "Complete";
-				completeBtn.className = "completeItem";
-				parDiv.appendChild(completeBtn);
-				var editBtn = document.createElement("button");
-				editBtn.innerHTML = "Change";
-				editBtn.className = "changeItem";
-				parDiv.appendChild(editBtn);
-				var deleteBtn = document.createElement("button");
-				deleteBtn.innerHTML = "Delete";
-				deleteBtn.className = "deleteItem";
-				parDiv.appendChild(deleteBtn);
-				document.querySelector(".toDoList").appendChild(parDiv);
-			}
-		}
-
-		document.addEventListener('click',function(e){
-		    if(e.target && e.target.className == 'changeItem'){
-		    	if(e.target.innerHTML == "Change"){
-					e.target.innerHTML = "Set Item";
-					e.target.parentElement.getElementsByClassName("editListItem")[0].style.display="block";
-					e.target.parentElement.getElementsByClassName("editListItem")[0].focus();
-					e.target.parentElement.getElementsByClassName("editListItem")[0].select();
-					e.target.parentElement.getElementsByClassName("listItem")[0].style.display="none";
-				} else {
-					e.target.innerHTML = "Change";
-					e.target.parentElement.getElementsByClassName("editListItem")[0].style.display="none";
-					e.target.parentElement.getElementsByClassName("listItem")[0].style.display="block";
-					var editedValue = e.target.parentElement.getElementsByClassName("editListItem")[0].value;
-					e.target.parentElement.getElementsByClassName("listItem")[0].innerHTML = editedValue;
-				}
-		    }
-
-		    if(e.target && e.target.className == 'deleteItem'){
-		    	if(document.getElementsByClassName("toDOList")[0].childElementCount==0){
-		    		document.getElementsByClassName("toDOList").style.display="none";
-		    	}
-		    	e.target.parentElement.remove();
-		    }
-
-		    if(e.target && e.target.className == 'completeItem'){
-		    	if(document.getElementsByClassName("toDOList")[0].childElementCount==0){
-		    		document.getElementsByClassName("toDOList").style.display="none";
-		    	}
-		    	var p = document.createElement("p");
-		    	p.innerHTML = e.target.parentElement.getElementsByClassName("listItem")[0].innerHTML;
-		 		document.querySelector(".completedTasks").appendChild(p);   	
-		    	e.target.parentElement.remove();
-		    }
-		})
 
 	</script>
+
 </body>
 </html>
