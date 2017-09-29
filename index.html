@@ -88,6 +88,8 @@
 		
 		var dB = firebase.database();
 		var Auth = firebase.auth();
+		var provider = new firebase.auth.GoogleAuthProvider();
+
 		var utterThis,msg;
 	    
 	    Auth.onAuthStateChanged(function(user) {
@@ -116,7 +118,9 @@
 				utterThis.voice = voices[3];
 		        utterThis.pitch = 1;
 		        utterThis.rate = 1;
-		        synth.speak(utterThis);	  		
+		        synth.speak(utterThis);
+		        $("#micDiv").css("display","block");	  		
+		        $("#authDiv").css("display","none");
 			}).catch(function(error) {
 			  // Handle Errors here.
 			  var errorCode = error.code;
