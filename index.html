@@ -37,11 +37,11 @@
 		#googleAuth{
 			position:absolute;
 			top:40%;
-			left:30%;
 			border-radius:7px;
+			width:60%;
+			margin:0 auto;
 			color:white;
 			font-size:60px;
-			margin:1px auto;
 			padding:20px;
 			background-color:#DD1812;
 			border:0px solid white;
@@ -58,9 +58,7 @@
 </head>
 <body>
 	
-	<div id="authDiv" class="text-center">
-		<button id="googleAuth"><i class="fa fa-google"></i><i class="fa fa-fw"></i>Sign In with Google</button>
-	</div>
+	<button id="googleAuth"><i class="fa fa-google"></i><i class="fa fa-fw"></i>Sign In with Google</button>
 
 
 	<div id="micDiv">
@@ -97,7 +95,7 @@
 	        if (user) {
 				msg = "Welcome, " + user.displayName + ". Please let me know what you want to do by clicking the microphone.";
 	        } else {
-	        	msg = "Welcome, anonymous user. Please log in with your Google account for a personalized experience. I look forward to helping you.";
+	        	msg = "Welcome, anonymous user. Please log in with your Google account for a personalized experience.";
 	        }
 	       	utterThis = new SpeechSynthesisUtterance(msg);
 			utterThis.voice = voices[3];
